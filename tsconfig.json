@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "baseUrl": ".",
+    "paths": {
+      "src": ["src"],
+      "src/*": ["src/*"],
+      "controllers": ["src/controllers/index.ts"],
+      "controllers/*": ["src/controllers/*"],
+      "services": ["src/services/index.ts"],
+      "services/*": ["src/services/*"],
+      "routes": ["src/routes/index.ts"],
+      "routes/*": ["src/routes/*"],
+      "models": ["src/models/index.ts"],
+      "models/*": ["src/models/*"],
+      "schemas": ["src/schemas/index.ts"],
+      "schemas/*": ["src/schemas/*"],
+      "db": ["src/db/index.ts"],
+      "db/*": ["src/db/*"],
+      "config": ["src/environment"]
+    },
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  }
+}
+
+

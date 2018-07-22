@@ -1,0 +1,70 @@
+version: 2
+jobs:
+  release:
+    docker:
+      - image: node
+    steps:
+      - checkout
+      - run:
+          name: Run npm install
+          command: npm install
+      - run:
+          name: Run semantic release
+          command: npm run release
+  deploy_image:
+    docker:
+      - image: tsirlucas/soundplace-deployer
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build docker image
+          command: docker build . -t soundplace-graphql
+      - run:
+          name: Publish docker image
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            docker tag soundplace-graphql "tsirlucas/soundplace-graphql:${CIRCLE_TAG}"
+            docker push "tsirlucas/soundplace-graphql:${CIRCLE_TAG}"
+            docker tag soundplace-graphql "tsirlucas/soundplace-graphql:latest"
+            docker push "tsirlucas/soundplace-graphql:latest"
+  deploy_service:
+    docker:
+      - image: tsirlucas/soundplace-deployer
+    steps:
+      - run:
+          name: Set gcloud credentials
+          command: mkdir .gcloud-secrets && echo "$GCLOUD_AUTH" >> .gcloud-secrets/gcloud_auth.json
+      - run:
+          name: cat
+          command: cat .gcloud-secrets/gcloud_auth.json
+      - run:
+          name: Gcloud login
+          command: gcloud auth activate-service-account --key-file .gcloud-secrets/gcloud_auth.json
+      - run:
+          name: Get cluster credentials
+          command: gcloud container clusters get-credentials soundplace --zone us-central1-b --project soundplace-infra
+      - run:
+          name: Rolling update pods
+          command: kubectl rolling-update graphql-api-rc --image=tsirlucas/soundplace-graphql:${CIRCLE_TAG} --image-pull-policy=Always
+workflows:
+  version: 2
+  release:
+    jobs:
+      - release
+  deploy:
+    jobs:
+      - deploy_image:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/
+      - deploy_service:
+          requires:
+            - deploy_image
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /.*/

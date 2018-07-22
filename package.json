@@ -1,0 +1,55 @@
+{
+	"name": "soundplace-graphql",
+	"description": "Soundplace Graphql API",
+	"repository": {},
+	"license": "UNLICENSED",
+	"version": "1.0.0",
+	"main": "server.js",
+	"scripts": {
+		"start": "npm run build:live",
+		"build:live": "nodemon --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
+		"release": "semantic-release"
+	},
+	"dependencies": {
+		"dotenv": "^6.0.0",
+		"express": "^4.16.3",
+		"cors": "^2.8.4",
+		"pg": "^7.4.3"
+	},
+	"devDependencies": {
+		"@semantic-release/changelog": "^2.1.1",
+		"@semantic-release/exec": "^2.2.4",
+		"@semantic-release/git": "^6.0.1",
+		"@semantic-release/github": "^4.4.1",
+		"@types/cors": "^2.8.4",
+		"@types/express": "^4.16.0",
+		"@types/node": "^10.5.2",
+		"@types/pg": "^7.4.10",
+		"nodemon": "^1.18.3",
+		"semantic-release": "^15.7.1",
+		"ts-node": "^7.0.0",
+		"tsconfig-paths": "^3.4.2",
+		"typescript": "^2.9.2",
+		"utility-types": "^2.0.0"
+	},
+	"release": {
+		"prepare": [
+			"@semantic-release/changelog",
+			{
+				"path": "@semantic-release/exec",
+				"cmd": "bash ./scripts/setVersion.sh ${nextRelease.version}"
+			},
+			{
+				"path": "@semantic-release/git",
+				"assets": [
+					"package.json",
+					"CHANGELOG.md"
+				],
+				"message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+			}
+		],
+		"publish": [
+			"@semantic-release/github"
+		]
+	}
+}
