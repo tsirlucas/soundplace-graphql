@@ -14,7 +14,7 @@ const parsedPem = (environment.secrets.dbPem as string).replace(/"/g, '').replac
 
 fs_writeFile('postgresql.pem', parsedPem, {encoding: 'utf8'})
   .then(() => {
-    const httpServer = app.listen(process.env.PORT || 3000, (error: Error) => {
+    const httpServer = app.listen(process.env.PORT || 3004, (error: Error) => {
       if (error) {
         console.error(error);
       } else {
@@ -22,7 +22,7 @@ fs_writeFile('postgresql.pem', parsedPem, {encoding: 'utf8'})
         console.info(
           `==> 🌎 Listening on ${address.port}. Open up http://localhost:${
             address.port
-          }/ in your browser.`,
+          }/graphql in your browser.`,
         );
       }
     });

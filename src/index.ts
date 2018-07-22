@@ -1,33 +1,46 @@
+import {ApolloServer, gql} from 'apollo-server-express';
+import axios from 'axios';
 import {environment} from 'config';
-import cors from 'cors';
 import express from 'express';
+
+// Construct a schema, using GraphQL schema language
+const typeDefs = gql`
+  type Query {
+    hello: String
+  }
+`;
+
+// Provide resolver functions for your schema fields
+const resolvers = {
+  Query: {
+    hello: () => 'Hello world!',
+  },
+};
+
+const myGraphQLSchema = {typeDefs, resolvers};
 
 const app = express();
 
-app
-  .use(cors())
-  .options('*', cors())
-  .use(async (req, res, next) => {
-    try {
+app.use(async (req, res, next) => {
+  try {
+    if (req.method !== 'GET') {
       const {authorization} = req.headers;
-      const {status, data} = await axios.get(`${environment.settings.authEndpoint}/jwt/verify`, {
+      const {data} = await axios.get(`${environment.settings.authEndpoint}/jwt/verify`, {
         headers: {
-          Authorization: authorization,
+          Authorization: authorization || null,
         },
       });
 
-      if (status === 200) {
-        res.locals.userId = data.userId;
-        next();
-      } else {
-        res.sendStatus(status);
-      }
-    } catch (e) {
-      throw e;
+      res.locals.userId = data.userId;
     }
-  })
-  .get('/', (_req, res) => res.send('Working ;)'))
-  .use('/api', dataRouter)
-  .use('/subscription', subscriptionRouter);
+    next();
+  } catch (e) {
+    res.status(e.response.status).send(e.response.data);
+  }
+});
+
+const server = new ApolloServer(myGraphQLSchema);
+
+server.applyMiddleware({app, cors: true});
 
 export default app;

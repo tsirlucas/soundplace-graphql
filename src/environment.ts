@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const commonvars = {
+  authEndpoint: `http://${process.env.AUTH_API_ENDPOINT}`,
   dbEndpoint: process.env.DATABASE_ENDPOINT,
   dbName: process.env.DATABASE_NAME,
 };
