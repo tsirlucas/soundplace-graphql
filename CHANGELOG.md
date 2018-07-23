@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.1.1...v1.2.0) (2018-07-23)
+
+
+### Features
+
+* **tracks:** add tracks resolver on playlist ([74d9424](https://github.com/tsirlucas/soundplace-graphql/commit/74d9424))
+
 ## [1.1.1](https://github.com/tsirlucas/soundplace-graphql/compare/v1.1.0...v1.1.1) (2018-07-23)
 
 
