@@ -1,8 +1,8 @@
 import {gql} from 'apollo-server-express';
 import {User} from 'db';
+import {GraphQLResolveInfo} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
 
-import {GraphQLResolveInfo} from '../../node_modules/@types/graphql';
 import {TopLevelFields} from './util';
 
 const userTypes = gql`

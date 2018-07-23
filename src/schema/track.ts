@@ -1,8 +1,10 @@
 import {gql} from 'apollo-server-express';
-import {Album, Artist, Track} from 'db';
+import {Track} from 'db';
+import {GraphQLResolveInfo} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
 
-import {GraphQLResolveInfo} from '../../node_modules/@types/graphql';
+import {Context} from 'models';
+
 import {albumTypes} from './album';
 import {artistTypes} from './artist';
 import {TopLevelFields} from './util';
@@ -31,13 +33,13 @@ const trackQueries = gql`
 
 export const trackResolvers = {
   Track: {
-    artist: (obj: any, _args: any, _context: any, info: GraphQLResolveInfo) => {
+    artist: ({artistId}: any, _args: any, {dataloaders}: Context, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info).get();
-      return Artist.getInstance().findById(obj.artistId, topLevelFields);
+      return dataloaders.artistLoader.load({key: artistId, fields: topLevelFields});
     },
-    album: ({albumId}: any, _args: any, _context: any, info: GraphQLResolveInfo) => {
+    album: ({albumId}: any, _args: any, {dataloaders}: Context, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info).get();
-      return Album.getInstance().findById(albumId, topLevelFields);
+      return dataloaders.albumLoader.load({key: albumId, fields: topLevelFields});
     },
   },
 };

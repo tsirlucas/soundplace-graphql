@@ -1,8 +1,8 @@
 import {gql} from 'apollo-server-express';
 import {Album} from 'db';
+import {GraphQLResolveInfo} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
 
-import {GraphQLResolveInfo} from '../../node_modules/@types/graphql';
 import {TopLevelFields} from './util';
 
 export const albumTypes = gql`
@@ -19,7 +19,7 @@ const albumQueries = gql`
   }
 `;
 
-const albumQueriesResolvers = {
+const albumResolvers = {
   Query: {
     album: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info).get();
@@ -30,5 +30,5 @@ const albumQueriesResolvers = {
 
 export const albumSchema = makeExecutableSchema({
   typeDefs: [albumTypes, albumQueries],
-  resolvers: [albumQueriesResolvers],
+  resolvers: [albumResolvers],
 });

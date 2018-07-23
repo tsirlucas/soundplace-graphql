@@ -1,6 +1,7 @@
+import {GraphQLResolveInfo} from 'graphql';
 import graphqlFields from 'graphql-fields';
 
-export const TopLevelFields = (info: any) => {
+export const TopLevelFields = (info: GraphQLResolveInfo) => {
   const fieldsObj = graphqlFields(info);
   let fields = Object.keys(fieldsObj);
 

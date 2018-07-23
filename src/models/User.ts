@@ -1,4 +1,4 @@
-import {DBUser} from 'src/models/DBUser';
+import {DBUser} from './DBUser';
 
 export type User = {
   id: DBUser['id'];

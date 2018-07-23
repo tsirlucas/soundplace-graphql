@@ -1,4 +1,4 @@
-import {DBAlbum} from 'src/models/DBAlbum';
+import {DBAlbum} from './DBAlbum';
 
 export type Album = {
   id: DBAlbum['id'];

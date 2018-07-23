@@ -1,9 +1,9 @@
 import {ApolloServer} from 'apollo-server-express';
 import axios from 'axios';
+import {environment} from 'config';
+import {Dataloaders} from 'dataloaders';
 import express, {Response} from 'express';
-
-import {environment} from 'src/environment';
-import {schema} from 'src/schema';
+import {schema} from 'schema';
 
 const app = express();
 
@@ -18,6 +18,7 @@ app.use(async (req, res, next) => {
       });
 
       res.locals.userId = data.userId;
+      res.locals.dataloaders = new Dataloaders();
     }
     next();
   } catch (e) {
@@ -29,6 +30,7 @@ const server = new ApolloServer({
   schema,
   context: ({res}: {res: Response}) => ({
     userId: res.locals.userId,
+    dataloaders: res.locals.dataloaders,
   }),
 });
 

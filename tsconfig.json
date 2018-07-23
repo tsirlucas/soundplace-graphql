@@ -19,6 +19,8 @@
       "db/*": ["src/db/*"],
       "schema": ["src/schema/index.ts"],
       "schema/*": ["src/schema/*"],
+      "dataloaders": ["src/dataloaders/index.ts"],
+      "dataloaders/*": ["src/dataloaders/*"],
       "config": ["src/environment"]
     },
     "typeRoots": [

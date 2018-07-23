@@ -26,4 +26,11 @@ export class Artist {
     const {rows} = await DBConnection.getInstance().query(query, [fieldValue]);
     return rows;
   }
+
+  public async batch(ids: string[], fields: string[]): Promise<TArtist[]> {
+    const fieldsString = fields.join(', ');
+    const query = `SELECT ${fieldsString} FROM artist_data WHERE id = ANY ($1);`;
+    const {rows} = await DBConnection.getInstance().query(query, [[ids]]);
+    return rows;
+  }
 }

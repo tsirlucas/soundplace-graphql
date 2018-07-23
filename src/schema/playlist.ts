@@ -1,8 +1,9 @@
+import {Context} from 'apollo-server-core';
 import {gql} from 'apollo-server-express';
 import {Playlist} from 'db';
+import {GraphQLResolveInfo} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
 
-import {GraphQLResolveInfo} from '../../node_modules/@types/graphql';
 import {trackResolvers, trackTypes} from './track';
 import {TopLevelFields} from './util';
 
@@ -37,18 +38,13 @@ const playlistResolvers = {
 
 const playlistQueriesResolvers = {
   Query: {
-    playlist: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
+    playlist: (_obj: any, args: any, _context: Context, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info)
         .getIdFor(['tracks'])
         .get();
       return Playlist.getInstance().findById(args.id, topLevelFields);
     },
-    currentUserPlaylists: (
-      _obj: any,
-      _args: any,
-      {userId}: {userId: string},
-      info: GraphQLResolveInfo,
-    ) => {
+    currentUserPlaylists: (_obj: any, _args: any, {userId}: Context, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info)
         .getIdFor(['tracks'])
         .get();

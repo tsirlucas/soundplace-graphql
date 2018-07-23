@@ -1,4 +1,4 @@
-import {DBPlaylist} from 'src/models/DBPlaylist';
+import {DBPlaylist} from './DBPlaylist';
 
 export type Playlist = {
   id: DBPlaylist['id'];
