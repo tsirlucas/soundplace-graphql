@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.2.0...v1.3.0) (2018-07-23)
+
+
+### Features
+
+* **graphql:** add album and artists ([efd0ecd](https://github.com/tsirlucas/soundplace-graphql/commit/efd0ecd))
+
 # [1.2.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.1.1...v1.2.0) (2018-07-23)
 
 
