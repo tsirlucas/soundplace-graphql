@@ -16,25 +16,25 @@ const playlistTypes = gql`
 
 const playlistQueries = gql`
   type Query {
-    playlists: [Playlist]
     playlistById(id: ID!): Playlist
-    playlistByUser(userId: ID!): Playlist
+    currentUserPlaylists: Playlist
   }
 `;
 
 const playlistResolvers = {
   Query: {
-    playlists: (_obj: any, _args: any, _context: any, info: GraphQLResolveInfo) => {
-      const topLevelFields = Object.keys(graphqlFields(info));
-      return Playlist.getInstance().findAll(topLevelFields);
-    },
     playlistById: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
       const topLevelFields = Object.keys(graphqlFields(info));
       return Playlist.getInstance().findById(args.id, topLevelFields);
     },
-    playlistByUser: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
+    currentUserPlaylists: (
+      _obj: any,
+      _args: any,
+      {userId}: {userId: string},
+      info: GraphQLResolveInfo,
+    ) => {
       const topLevelFields = Object.keys(graphqlFields(info));
-      return Playlist.getInstance().findBy('user_id', args.userId, topLevelFields);
+      return Playlist.getInstance().findBy('user_id', userId, topLevelFields);
     },
   },
 };

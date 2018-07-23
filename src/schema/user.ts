@@ -15,20 +15,15 @@ const userTypes = gql`
 
 const userQueries = gql`
   type Query {
-    users: [User]
-    userById(id: ID!): User
+    currentUser: User
   }
 `;
 
 const userResolvers = {
   Query: {
-    users: (_obj: any, _args: any, _context: any, info: GraphQLResolveInfo) => {
+    currentUser: (_obj: any, _args: any, {userId}: {userId: string}, info: GraphQLResolveInfo) => {
       const topLevelFields = Object.keys(graphqlFields(info));
-      return User.getInstance().findAll(topLevelFields);
-    },
-    userById: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
-      const topLevelFields = Object.keys(graphqlFields(info));
-      return User.getInstance().findById(args.id, topLevelFields);
+      return User.getInstance().findById(userId, topLevelFields);
     },
   },
 };
@@ -36,4 +31,4 @@ const userResolvers = {
 export const userSchema = makeExecutableSchema({
   typeDefs: [userTypes, userQueries],
   resolvers: [userResolvers],
-})
+});

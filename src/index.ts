@@ -1,6 +1,6 @@
 import {ApolloServer} from 'apollo-server-express';
 import axios from 'axios';
-import express from 'express';
+import express, {Response} from 'express';
 
 import {environment} from 'src/environment';
 import {schema} from 'src/schema';
@@ -25,7 +25,12 @@ app.use(async (req, res, next) => {
   }
 });
 
-const server = new ApolloServer({schema});
+const server = new ApolloServer({
+  schema,
+  context: ({res}: {res: Response}) => ({
+    userId: res.locals.userId,
+  }),
+});
 
 server.applyMiddleware({app, cors: true});
 
