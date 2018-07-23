@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/tsirlucas/soundplace-graphql/compare/v1.5.0...v1.5.1) (2018-07-23)
+
+
+### Bug Fixes
+
+* **dataloaders:** fix result order to match inputed ids ([08d2d62](https://github.com/tsirlucas/soundplace-graphql/commit/08d2d62))
+
 # [1.5.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.4.0...v1.5.0) (2018-07-23)
 
 
