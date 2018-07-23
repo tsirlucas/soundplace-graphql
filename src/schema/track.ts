@@ -34,11 +34,15 @@ const trackQueries = gql`
 export const trackResolvers = {
   Track: {
     artist: ({artistId}: any, _args: any, {dataloaders}: Context, info: GraphQLResolveInfo) => {
-      const topLevelFields = TopLevelFields(info).get();
+      const topLevelFields = TopLevelFields(info)
+        .getId()
+        .get();
       return dataloaders.artistLoader.load({key: artistId, fields: topLevelFields});
     },
     album: ({albumId}: any, _args: any, {dataloaders}: Context, info: GraphQLResolveInfo) => {
-      const topLevelFields = TopLevelFields(info).get();
+      const topLevelFields = TopLevelFields(info)
+        .getId()
+        .get();
       return dataloaders.albumLoader.load({key: albumId, fields: topLevelFields});
     },
   },

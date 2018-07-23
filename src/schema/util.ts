@@ -17,6 +17,11 @@ export const TopLevelFields = (info: GraphQLResolveInfo) => {
     return methods;
   };
 
+  const getId = () => {
+    fields = [...fields, 'id'];
+    return methods;
+  }
+
   const getIdFor = (idFields: string[]) => {
     const existentIdFields = idFields.filter((field) => {
       return fields.indexOf(field) >= 0;
@@ -32,6 +37,7 @@ export const TopLevelFields = (info: GraphQLResolveInfo) => {
   const methods = {
     get: () => fields.filter((prop) => Object.keys(fieldsObj[prop] || {}).length === 0),
     pickIdsFrom,
+    getId,
     getIdFor,
   };
 
