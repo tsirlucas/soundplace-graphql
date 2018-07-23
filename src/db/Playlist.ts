@@ -1,6 +1,7 @@
-import {Playlist as TPlaylist, Track} from 'models';
+import {Playlist as TPlaylist, Track as TTrack} from 'models';
 
 import {DBConnection} from './DBConnection';
+import {Track} from './Track';
 
 export class Playlist {
   private static instance: Playlist;
@@ -49,8 +50,10 @@ export class Playlist {
     return rows;
   }
 
-  public async findTracks(id: string, fields: string[]): Promise<Track[]> {
-    const parsedFields = this.parseFields(fields).map((field) => `t.${field}`);
+  public async findTracks(id: string, fields: string[]): Promise<TTrack[]> {
+    const parsedFields = Track.getInstance()
+      .parseFields(fields)
+      .map((field) => `t.${field}`);
     const fieldsString = parsedFields.join(', ');
 
     const query = `SELECT ${fieldsString}

@@ -1,10 +1,10 @@
 import {gql} from 'apollo-server-express';
 import {Playlist} from 'db';
-import graphqlFields from 'graphql-fields';
 import {makeExecutableSchema} from 'graphql-tools';
 
 import {GraphQLResolveInfo} from '../../node_modules/@types/graphql';
 import {trackTypes} from './track';
+import {TopLevelFields} from './util';
 
 const playlistTypes = gql`
   type Playlist {
@@ -26,13 +26,16 @@ const playlistQueries = gql`
 const playlistResolvers = {
   Playlist: {
     tracks: ({id}: any, _args: any, _context: any, info: GraphQLResolveInfo) => {
-      const topLevelFields = Object.keys(graphqlFields(info));
+      const topLevelFields = TopLevelFields(info)
+        .pickIdsFrom(['artist', 'album'])
+        .get();
+
       return Playlist.getInstance().findTracks(id, topLevelFields);
     },
   },
   Query: {
     playlistById: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
-      const topLevelFields = Object.keys(graphqlFields(info));
+      const topLevelFields = TopLevelFields(info).get();
       return Playlist.getInstance().findById(args.id, topLevelFields);
     },
     currentUserPlaylists: (
@@ -41,10 +44,7 @@ const playlistResolvers = {
       {userId}: {userId: string},
       info: GraphQLResolveInfo,
     ) => {
-      const fieldsObj = graphqlFields(info);
-      const topLevelFields = Object.keys(fieldsObj).filter(
-        (prop) => Object.keys(fieldsObj[prop]).length === 0,
-      );
+      const topLevelFields = TopLevelFields(info).get();
       return Playlist.getInstance().findBy('user_id', userId, topLevelFields);
     },
   },

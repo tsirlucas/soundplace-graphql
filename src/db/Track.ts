@@ -18,7 +18,7 @@ export class Track {
     artistId: 'artist_id as "artistId"',
   };
 
-  private parseFields(fields: string[]) {
+  public parseFields(fields: string[]) {
     return fields.map((field) => this.differentFields[field] || field);
   }
 

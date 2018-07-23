@@ -1,9 +1,9 @@
 import {gql} from 'apollo-server-express';
 import {User} from 'db';
-import graphqlFields from 'graphql-fields';
 import {makeExecutableSchema} from 'graphql-tools';
 
 import {GraphQLResolveInfo} from '../../node_modules/@types/graphql';
+import {TopLevelFields} from './util';
 
 const userTypes = gql`
   type User {
@@ -22,7 +22,7 @@ const userQueries = gql`
 const userResolvers = {
   Query: {
     currentUser: (_obj: any, _args: any, {userId}: {userId: string}, info: GraphQLResolveInfo) => {
-      const topLevelFields = Object.keys(graphqlFields(info));
+      const topLevelFields = TopLevelFields(info).get();
       return User.getInstance().findById(userId, topLevelFields);
     },
   },
