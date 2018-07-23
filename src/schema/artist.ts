@@ -14,13 +14,13 @@ export const artistTypes = gql`
 
 const artistQueries = gql`
   type Query {
-    artistById(id: ID!): Artist
+    artist(id: ID!): Artist
   }
 `;
 
-const artistResolvers = {
+const artistQueriesResolvers = {
   Query: {
-    artistById: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
+    artist: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info).get();
       return Artist.getInstance().findById(args.id, topLevelFields);
     },
@@ -29,5 +29,5 @@ const artistResolvers = {
 
 export const artistSchema = makeExecutableSchema({
   typeDefs: [artistTypes, artistQueries],
-  resolvers: [artistResolvers],
+  resolvers: [artistQueriesResolvers],
 });

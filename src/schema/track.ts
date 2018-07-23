@@ -25,11 +25,11 @@ export const trackTypes = gql`
 
 const trackQueries = gql`
   type Query {
-    trackById(id: ID!): Track
+    track(id: ID!): Track
   }
 `;
 
-const trackResolvers = {
+export const trackResolvers = {
   Track: {
     artist: (obj: any, _args: any, _context: any, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info).get();
@@ -40,8 +40,11 @@ const trackResolvers = {
       return Album.getInstance().findById(albumId, topLevelFields);
     },
   },
+};
+
+const trackQueriesResolvers = {
   Query: {
-    trackById: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
+    track: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info)
         .pickIdsFrom(['artist', 'album'])
         .get();
@@ -52,5 +55,5 @@ const trackResolvers = {
 
 export const trackSchema = makeExecutableSchema({
   typeDefs: [trackTypes, trackQueries],
-  resolvers: [trackResolvers],
+  resolvers: [trackResolvers, trackQueriesResolvers],
 });

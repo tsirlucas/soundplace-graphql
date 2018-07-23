@@ -15,13 +15,13 @@ export const albumTypes = gql`
 
 const albumQueries = gql`
   type Query {
-    albumById(id: ID!): Album
+    album(id: ID!): Album
   }
 `;
 
-const albumResolvers = {
+const albumQueriesResolvers = {
   Query: {
-    albumById: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
+    album: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info).get();
       return Album.getInstance().findById(args.id, topLevelFields);
     },
@@ -30,5 +30,5 @@ const albumResolvers = {
 
 export const albumSchema = makeExecutableSchema({
   typeDefs: [albumTypes, albumQueries],
-  resolvers: [albumResolvers],
+  resolvers: [albumQueriesResolvers],
 });

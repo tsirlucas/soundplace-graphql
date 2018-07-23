@@ -3,7 +3,7 @@ import {Playlist} from 'db';
 import {makeExecutableSchema} from 'graphql-tools';
 
 import {GraphQLResolveInfo} from '../../node_modules/@types/graphql';
-import {trackTypes} from './track';
+import {trackResolvers, trackTypes} from './track';
 import {TopLevelFields} from './util';
 
 const playlistTypes = gql`
@@ -18,7 +18,7 @@ const playlistTypes = gql`
 
 const playlistQueries = gql`
   type Query {
-    playlistById(id: ID!): Playlist
+    playlist(id: ID!): Playlist
     currentUserPlaylists: [Playlist]
   }
 `;
@@ -33,9 +33,14 @@ const playlistResolvers = {
       return Playlist.getInstance().findTracks(id, topLevelFields);
     },
   },
+};
+
+const playlistQueriesResolvers = {
   Query: {
-    playlistById: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
-      const topLevelFields = TopLevelFields(info).get();
+    playlist: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
+      const topLevelFields = TopLevelFields(info)
+        .getIdFor(['tracks'])
+        .get();
       return Playlist.getInstance().findById(args.id, topLevelFields);
     },
     currentUserPlaylists: (
@@ -44,7 +49,9 @@ const playlistResolvers = {
       {userId}: {userId: string},
       info: GraphQLResolveInfo,
     ) => {
-      const topLevelFields = TopLevelFields(info).get();
+      const topLevelFields = TopLevelFields(info)
+        .getIdFor(['tracks'])
+        .get();
       return Playlist.getInstance().findBy('user_id', userId, topLevelFields);
     },
   },
@@ -52,5 +59,5 @@ const playlistResolvers = {
 
 export const playlistSchema = makeExecutableSchema({
   typeDefs: [playlistTypes, trackTypes, playlistQueries],
-  resolvers: [playlistResolvers],
+  resolvers: [playlistResolvers, playlistQueriesResolvers, trackResolvers],
 });

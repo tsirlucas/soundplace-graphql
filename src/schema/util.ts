@@ -7,20 +7,32 @@ export const TopLevelFields = (info: any) => {
   const pickIdsFrom = (idFields: string[]) => {
     const existentIdFields = idFields
       .filter((field) => {
-        console.log(field, fields.indexOf(field) >= 0);
         return fields.indexOf(field) >= 0;
       })
       .map((field) => `${field}Id`);
 
     fields = [...fields, ...existentIdFields];
 
-    return {
-      get: () => fields.filter((prop) => Object.keys(fieldsObj[prop] || {}).length === 0),
-    };
+    return methods;
   };
 
-  return {
+  const getIdFor = (idFields: string[]) => {
+    const existentIdFields = idFields.filter((field) => {
+      return fields.indexOf(field) >= 0;
+    });
+
+    if (existentIdFields.length > 0) {
+      fields = [...fields, 'id'];
+    }
+
+    return methods;
+  };
+
+  const methods = {
     get: () => fields.filter((prop) => Object.keys(fieldsObj[prop] || {}).length === 0),
     pickIdsFrom,
+    getIdFor,
   };
+
+  return methods;
 };
