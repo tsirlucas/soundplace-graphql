@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.3.1...v1.4.0) (2018-07-23)
+
+
+### Features
+
+* **dataloaders:** add dataloaders for track ([d5301b9](https://github.com/tsirlucas/soundplace-graphql/commit/d5301b9))
+
 ## [1.3.1](https://github.com/tsirlucas/soundplace-graphql/compare/v1.3.0...v1.3.1) (2018-07-23)
 
 
