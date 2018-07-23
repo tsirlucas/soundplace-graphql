@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.4.0...v1.5.0) (2018-07-23)
+
+
+### Features
+
+* **dataloader:** add dataloader to nested playlist tracks ([f2af466](https://github.com/tsirlucas/soundplace-graphql/commit/f2af466))
+
 # [1.4.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.3.1...v1.4.0) (2018-07-23)
 
 
