@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.0.0...v1.1.0) (2018-07-23)
+
+
+### Features
+
+* **graphql:** add user/playlist schema and resolver ([1e0a5c1](https://github.com/tsirlucas/soundplace-graphql/commit/1e0a5c1))
+
 # 1.0.0 (2018-07-22)
 
 
