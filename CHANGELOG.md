@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/tsirlucas/soundplace-graphql/compare/v1.5.1...v1.5.2) (2018-07-23)
+
+
+### Bug Fixes
+
+* **track:** get id when using dataloaders ([2395d76](https://github.com/tsirlucas/soundplace-graphql/commit/2395d76))
+
 ## [1.5.1](https://github.com/tsirlucas/soundplace-graphql/compare/v1.5.0...v1.5.1) (2018-07-23)
 
 
