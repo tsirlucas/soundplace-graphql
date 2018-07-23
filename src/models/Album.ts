@@ -1,5 +1,7 @@
+import {DBAlbum} from 'src/models/DBAlbum';
+
 export type Album = {
-  id: string;
-  name: string;
-  cover: string;
+  id: DBAlbum['id'];
+  name: DBAlbum['name'];
+  cover: DBAlbum['cover'];
 };

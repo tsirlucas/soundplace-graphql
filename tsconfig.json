@@ -16,10 +16,13 @@
       "models/*": ["src/models/*"],
       "db": ["src/db/index.ts"],
       "db/*": ["src/db/*"],
+      "schema": ["src/schema/index.ts"],
+      "schema/*": ["src/schema/*"],
       "config": ["src/environment"]
     },
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "custom_typings"
     ],
     "skipLibCheck": true,
     "esModuleInterop": true

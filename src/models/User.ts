@@ -1,5 +1,7 @@
+import {DBUser} from 'src/models/DBUser';
+
 export type User = {
-  id: string;
-  name: string;
-  image: string;
+  id: DBUser['id'];
+  name: DBUser['name'];
+  image: DBUser['image'];
 };

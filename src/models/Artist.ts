@@ -1,4 +1,3 @@
-export type Artist = {
-  id: string;
-  name: string;
-};
+import {DBArtist} from './DBArtist';
+
+export type Artist = DBArtist;

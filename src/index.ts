@@ -1,23 +1,9 @@
-import {ApolloServer, gql} from 'apollo-server-express';
+import {ApolloServer} from 'apollo-server-express';
 import axios from 'axios';
-import {environment} from 'config';
 import express from 'express';
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world!',
-  },
-};
-
-const myGraphQLSchema = {typeDefs, resolvers};
+import {environment} from 'src/environment';
+import {schema} from 'src/schema';
 
 const app = express();
 
@@ -39,7 +25,7 @@ app.use(async (req, res, next) => {
   }
 });
 
-const server = new ApolloServer(myGraphQLSchema);
+const server = new ApolloServer({schema});
 
 server.applyMiddleware({app, cors: true});
 
