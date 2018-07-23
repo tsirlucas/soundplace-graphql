@@ -22,37 +22,44 @@ export class Dataloaders {
   );
 
   public artistLoader = new Dataloader<DataloaderParam, TArtist>(
-    (params: DataloaderParam[]) => {
-      const ids = params.map((param) => param.key);
-      const fields = params[0].fields;
-      return Artist.getInstance()
-        .batch(ids, fields)
-        .catch((e) => {
-          console.log(e);
-          return e;
-        });
+    async (params: DataloaderParam[]) => {
+      try {
+        const ids = params.map((param) => param.key);
+        const fields = params[0].fields;
+        const result = await Artist.getInstance().batch(ids, fields);
+        return this.sortBased(result, ids);
+      } catch (e) {
+        console.log(e);
+        return e;
+      }
     },
     {cacheKeyFn: (param: DataloaderParam) => param.key},
   );
 
   public albumLoader = new Dataloader<DataloaderParam, TAlbum>(
-    (params: DataloaderParam[]) => {
-      const ids = params.map((param) => param.key);
-      const fields = params[0].fields;
-      return Album.getInstance()
-        .batch(ids, fields)
-        .catch((e) => {
-          console.log(e);
-          return e;
-        });
+    async (params: DataloaderParam[]) => {
+      try {
+        const ids = params.map((param) => param.key);
+        const fields = params[0].fields;
+        const result = await Album.getInstance().batch(ids, fields);
+
+        return this.sortBased(result, ids);
+      } catch (e) {
+        console.log(e);
+        return e;
+      }
     },
     {cacheKeyFn: (param: DataloaderParam) => param.key},
   );
 
-  groupBy(xs: any[], key: string) {
-    return xs.reduce(function(rv, x) {
-      (rv[x[key]] = rv[x[key]] || []).push(x);
-      return rv;
+  sortBased(toSort: any[], baseArr: any[]) {
+    var indexObject = toSort.reduce((result, currentObject) => {
+      result[currentObject.id] = currentObject;
+      return result;
     }, {});
+
+    return baseArr.map((id) => {
+      return indexObject[id];
+    });
   }
 }
