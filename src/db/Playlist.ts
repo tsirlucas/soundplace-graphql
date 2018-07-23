@@ -67,4 +67,27 @@ export class Playlist {
     const {rows} = await DBConnection.getInstance().query(query, [id]);
     return rows;
   }
+
+  public async batchFindTracks(ids: string[], fields: string[]): Promise<TTrack[]> {
+    try {
+      const parsedFields = Track.getInstance()
+        .parseFields(fields)
+        .map((field) => `t.${field}`);
+      const fieldsString = parsedFields.join(', ');
+
+      const query = `SELECT ${fieldsString}, pt.playlist_id as "playlistId"
+                    FROM playlist_data as p
+                    INNER JOIN playlist_track as pt
+                    ON pt.playlist_id = p.id
+                    INNER JOIN track_data as t
+                    ON pt.track_id = t.id
+                    WHERE pt.playlist_id= ANY ($1)`;
+
+      const {rows} = await DBConnection.getInstance().query(query, [[ids]]);
+      return rows;
+    } catch (e) {
+      console.log(e);
+      return e;
+    }
+  }
 }

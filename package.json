@@ -19,6 +19,7 @@
 		"graphql": "^0.13.2",
 		"graphql-fields": "^1.1.0",
 		"graphql-tools": "^3.0.5",
+		"lodash.groupby": "^4.6.0",
 		"pg": "^7.4.3"
 	},
 	"devDependencies": {
@@ -28,6 +29,7 @@
 		"@semantic-release/github": "^4.4.1",
 		"@types/cors": "^2.8.4",
 		"@types/express": "^4.16.0",
+		"@types/lodash.groupby": "^4.6.3",
 		"@types/node": "^10.5.2",
 		"@types/pg": "^7.4.10",
 		"nodemon": "^1.18.3",
