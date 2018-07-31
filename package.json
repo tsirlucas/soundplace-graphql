@@ -6,9 +6,11 @@
 	"version": "1.5.2",
 	"main": "server.js",
 	"scripts": {
-		"start": "npm run build:live",
-		"build:live": "nodemon --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
-		"release": "semantic-release"
+    "build": "./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
+    "dev": "NODE_ENV=development npm run build:live",
+    "start": "NODE_ENV=production npm run build",
+    "release": "semantic-release"
 	},
 	"dependencies": {
 		"apollo-server-express": "^2.0.0",

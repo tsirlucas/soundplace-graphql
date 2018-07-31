@@ -15,6 +15,10 @@ export class DBConnection {
         ca: 'postgresql.pem',
       },
     };
+    console.log(process.env.NODE_ENV);
+    if (process.env.NODE_ENV === 'development') {
+      delete config.ssl;
+    }
 
     this.pool = new Pool(config);
   }
