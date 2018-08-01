@@ -1,26 +1,25 @@
 import {environment} from 'config';
-import {Pool, PoolClient, QueryResult} from 'pg';
+import {Client, Pool, PoolClient, QueryResult} from 'pg';
 
 export class DBConnection {
   private static instance: DBConnection;
   private pool: Pool;
+  private config = {
+    host: environment.settings.dbEndpoint,
+    database: environment.settings.dbName,
+    user: environment.secrets.dbUser,
+    password: environment.secrets.dbPassword,
+    ssl: {
+      ca: 'postgresql.pem',
+    },
+  };
 
   private constructor() {
-    const config = {
-      host: environment.settings.dbEndpoint,
-      database: environment.settings.dbName,
-      user: environment.secrets.dbUser,
-      password: environment.secrets.dbPassword,
-      ssl: {
-        ca: 'postgresql.pem',
-      },
-    };
-    console.log(process.env.NODE_ENV);
     if (process.env.NODE_ENV === 'development') {
-      delete config.ssl;
+      delete this.config.ssl;
     }
 
-    this.pool = new Pool(config);
+    this.pool = new Pool(this.config);
   }
 
   static getInstance() {
@@ -54,5 +53,9 @@ export class DBConnection {
         done();
       }
     });
+  }
+
+  public getClientWithoutPool() {
+    return new Client(this.config);
   }
 }
