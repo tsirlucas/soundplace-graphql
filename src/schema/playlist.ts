@@ -5,7 +5,7 @@ import {makeExecutableSchema} from 'graphql-tools';
 
 import {Context} from 'models';
 
-import {trackResolvers, trackTypes} from './track';
+import {trackTypes} from './track';
 import {TopLevelFields} from './util';
 
 const playlistTypes = gql`
@@ -28,9 +28,7 @@ const playlistQueries = gql`
 const playlistResolvers = {
   Playlist: {
     tracks: ({id}: any, _args: any, {dataloaders}: Context, info: GraphQLResolveInfo) => {
-      const topLevelFields = TopLevelFields(info)
-        .pickIdsFrom(['artist', 'album'])
-        .get();
+      const topLevelFields = TopLevelFields(info).get();
       return dataloaders.tracksLoader.load({key: id, fields: topLevelFields});
     },
   },
@@ -55,5 +53,5 @@ const playlistQueriesResolvers = {
 
 export const playlistSchema = makeExecutableSchema({
   typeDefs: [playlistTypes, trackTypes, playlistQueries],
-  resolvers: [playlistResolvers, playlistQueriesResolvers, trackResolvers],
+  resolvers: [playlistResolvers, playlistQueriesResolvers],
 });

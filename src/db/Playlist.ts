@@ -1,7 +1,6 @@
 import {Playlist as TPlaylist, Track as TTrack} from 'models';
 
 import {DBConnection} from './DBConnection';
-import {Track} from './Track';
 
 export class Playlist {
   private static instance: Playlist;
@@ -51,9 +50,7 @@ export class Playlist {
   }
 
   public async findTracks(id: string, fields: string[]): Promise<TTrack[]> {
-    const parsedFields = Track.getInstance()
-      .parseFields(fields)
-      .map((field) => `t.${field}`);
+    const parsedFields = fields.map((field) => `t.${field}`);
     const fieldsString = parsedFields.join(', ');
 
     const query = `SELECT ${fieldsString}
@@ -70,9 +67,7 @@ export class Playlist {
 
   public async batchFindTracks(ids: string[], fields: string[]): Promise<TTrack[]> {
     try {
-      const parsedFields = Track.getInstance()
-        .parseFields(fields)
-        .map((field) => `t.${field}`);
+      const parsedFields = fields.map((field) => `t.${field}`);
       const fieldsString = parsedFields.join(', ');
 
       const query = `SELECT ${fieldsString}, pt.playlist_id as "playlistId"
