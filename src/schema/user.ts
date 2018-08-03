@@ -13,6 +13,11 @@ const userTypes = gql`
     name: String
     image: String
   }
+
+  type UserSubs {
+    operation: String
+    item: User
+  }
 `;
 
 const userQueries = gql`
@@ -23,7 +28,7 @@ const userQueries = gql`
 
 const userSubscriptions = gql`
   type Subscription {
-    currentUser: User
+    currentUser: UserSubs
   }
 `;
 
@@ -33,8 +38,8 @@ const userResolvers = {
       resolve: (payload: DBUser) => payload,
       subscribe: (_arg: any, _arg2: any, ctx: Context) =>
         withFilter(
-          () => PubSub.getInstance().pubsub.asyncIterator(['UPDATE_USER']),
-          (payload) => payload.id === ctx.userId,
+          () => PubSub.getInstance().pubsub.asyncIterator(['USER']),
+          (payload) => payload.item.id === ctx.userId,
         )(),
     },
   },

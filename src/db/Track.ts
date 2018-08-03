@@ -26,4 +26,10 @@ export class Track {
     const {rows} = await DBConnection.getInstance().query(query, [fieldValue]);
     return rows;
   }
+
+  public async checkRelation(id: string, playlistId: string) {
+    const query = `SELECT * FROM playlist_track WHERE track_id=$1 AND playlist_id=$2;`;
+    const {rows} = await DBConnection.getInstance().query(query, [id, playlistId]);
+    return rows.length > 0;
+  }
 }

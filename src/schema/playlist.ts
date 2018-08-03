@@ -1,5 +1,5 @@
-import {gql} from 'apollo-server-express';
-import {Playlist} from 'db';
+import {gql, withFilter} from 'apollo-server-express';
+import {Playlist, PubSub} from 'db';
 import {GraphQLResolveInfo} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
 
@@ -16,12 +16,23 @@ const playlistTypes = gql`
     userId: ID!
     tracks: [Track]
   }
+
+  type PlaylistSubs {
+    operation: String
+    item: Playlist
+  }
 `;
 
 const playlistQueries = gql`
   type Query {
     playlist(id: ID!): Playlist
     currentUserPlaylists: [Playlist]
+  }
+`;
+
+const playlistSubscriptions = gql`
+  type Subscription {
+    currentUserPlaylists: PlaylistSubs
   }
 `;
 
@@ -51,7 +62,23 @@ const playlistQueriesResolvers = {
   },
 };
 
+const playlistSubscriptionsResolvers = {
+  Subscription: {
+    currentUserPlaylists: {
+      resolve: (payload: any) => {
+        const {user_id, ...rest} = payload.item;
+        return {operation: payload.operation, item: {...rest, userId: user_id}};
+      },
+      subscribe: (_arg: any, _arg2: any, ctx: Context) =>
+        withFilter(
+          () => PubSub.getInstance().pubsub.asyncIterator(['PLAYLIST']),
+          (payload) => payload.item.user_id === ctx.userId,
+        )(),
+    },
+  },
+};
+
 export const playlistSchema = makeExecutableSchema({
-  typeDefs: [playlistTypes, trackTypes, playlistQueries],
-  resolvers: [playlistResolvers, playlistQueriesResolvers],
+  typeDefs: [playlistTypes, trackTypes, playlistQueries, playlistSubscriptions],
+  resolvers: [playlistResolvers, playlistQueriesResolvers, playlistSubscriptionsResolvers],
 });
