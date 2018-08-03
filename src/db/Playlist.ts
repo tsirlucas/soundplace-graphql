@@ -1,6 +1,7 @@
-import {Playlist as TPlaylist, Track as TTrack} from 'models';
+import {DBConnection} from 'src/db/DBConnection';
+import {Playlist as TPlaylist, Track as TTrack} from 'src/models';
 
-import {DBConnection} from './DBConnection';
+import {Cover} from './Cover';
 
 export class Playlist {
   private static instance: Playlist;
@@ -25,7 +26,13 @@ export class Playlist {
     const parsedFields = this.parseFields(fields);
     const fieldsString = parsedFields.join(', ');
     const query = `SELECT ${fieldsString} FROM playlist_data;`;
-    const {rows} = await DBConnection.getInstance().query(query, []);
+    let {rows} = await DBConnection.getInstance().query(query, []);
+    const ids = rows.map((row: TPlaylist) => row.id);
+    const covers = await Cover.getInstance().batchFindBy('playlist_id', ids, ['*']);
+    rows = rows.map((row: TPlaylist, index) => {
+      row.cover = covers[index];
+      return row;
+    });
     return rows;
   }
 
@@ -34,7 +41,10 @@ export class Playlist {
     const fieldsString = parsedFields.join(', ');
     const query = `SELECT ${fieldsString} FROM playlist_data WHERE id=$1;`;
     const {rows} = await DBConnection.getInstance().query(query, [id]);
-    return rows[0];
+    const cover = await Cover.getInstance().findBy('playlist_id', id, ['*']);
+    const playlist = rows[0] as TPlaylist;
+    playlist.cover = cover;
+    return playlist;
   }
 
   public async findBy(
@@ -45,7 +55,17 @@ export class Playlist {
     const parsedFields = this.parseFields(fields);
     const fieldsString = parsedFields.join(', ');
     const query = `SELECT ${fieldsString} FROM playlist_data WHERE ${fieldName}=$1;`;
-    const {rows} = await DBConnection.getInstance().query(query, [fieldValue]);
+    let {rows} = await DBConnection.getInstance().query(query, [fieldValue]);
+    console.log(rows);
+    const ids = rows.map((row: TPlaylist) => row.id);
+    const covers = await Cover.getInstance().batchFindBy('playlist_id', ids, ['*']);
+    rows = rows.map((row: TPlaylist, index) => {
+      row.cover = covers[index];
+      return row;
+    });
+
+    console.log(rows);
+
     return rows;
   }
 
@@ -61,7 +81,14 @@ export class Playlist {
     ON pt.track_id = t.id
     WHERE pt.playlist_id=$1`;
 
-    const {rows} = await DBConnection.getInstance().query(query, [id]);
+    let {rows} = await DBConnection.getInstance().query(query, [id]);
+    const ids = rows.map((row: TPlaylist) => row.id);
+    const covers = await Cover.getInstance().batchFindBy('track_id', ids, ['*']);
+    rows = rows.map((row: TPlaylist, index) => {
+      row.cover = covers[index];
+      return row;
+    });
+
     return rows;
   }
 
@@ -78,11 +105,22 @@ export class Playlist {
                     ON pt.track_id = t.id
                     WHERE pt.playlist_id= ANY ($1)`;
 
-      const {rows} = await DBConnection.getInstance().query(query, [[ids]]);
+      let {rows} = await DBConnection.getInstance().query(query, [[ids]]);
+      const covers = await Cover.getInstance().batchFindBy('track_id', ids, ['*']);
+      rows = rows.map((row: TPlaylist, index) => {
+        row.cover = covers[index];
+        return row;
+      });
       return rows;
     } catch (e) {
       console.log(e);
       return e;
     }
+  }
+
+  public async checkRelation(playlistId: string, userId: string) {
+    const query = `SELECT user_id FROM playlist_data WHERE id=$1 AND user_id=$2;`;
+    const {rows} = await DBConnection.getInstance().query(query, [playlistId, userId]);
+    return rows.length > 0;
   }
 }

@@ -1,5 +1,6 @@
-import {environment} from 'config';
 import {Client, Pool, PoolClient, QueryResult} from 'pg';
+
+import {environment} from 'src/environment';
 
 export class DBConnection {
   private static instance: DBConnection;

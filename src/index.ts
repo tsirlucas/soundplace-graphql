@@ -1,10 +1,11 @@
 import {ApolloServer} from 'apollo-server-express';
 import axios from 'axios';
-import {environment} from 'config';
-import {Dataloaders} from 'dataloaders';
 import express, {Request} from 'express';
 import {createServer} from 'http';
-import {schema} from 'schema';
+
+import {Dataloaders} from 'src/dataloaders';
+import {environment} from 'src/environment';
+import {schema} from 'src/schema';
 
 const app = express();
 

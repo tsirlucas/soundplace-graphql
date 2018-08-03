@@ -1,11 +1,10 @@
 import {gql, withFilter} from 'apollo-server-express';
-import {PubSub, User} from 'db';
 import {GraphQLResolveInfo} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
 
+import {PubSub, User} from 'src/db';
 import {Context, DBUser} from 'src/models';
-
-import {TopLevelFields} from './util';
+import {TopLevelFields} from 'src/schema/util';
 
 const userTypes = gql`
   type User {

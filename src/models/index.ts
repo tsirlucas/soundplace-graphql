@@ -7,3 +7,4 @@ export * from './DBTrack';
 export * from './Dataloaders';
 export * from './Context';
 export * from './DataloaderParam';
+export * from './DBCover';

@@ -1,8 +1,8 @@
 import Dataloader from 'dataloader';
-import {Playlist} from 'db';
 import groupBy from 'lodash.groupby';
 
-import {DataloaderParam, Track as TTrack} from 'models';
+import {Playlist} from 'src/db';
+import {DataloaderParam, Track as TTrack} from 'src/models';
 
 export class Dataloaders {
   public tracksLoader = new Dataloader<DataloaderParam, TTrack[]>(

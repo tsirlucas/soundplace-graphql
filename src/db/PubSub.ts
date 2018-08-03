@@ -1,6 +1,6 @@
 import {PostgresPubSub} from 'graphql-postgres-subscriptions';
 
-import {DBConnection} from './DBConnection';
+import {DBConnection} from 'src/db/DBConnection';
 
 export class PubSub {
   private static instance: PubSub;
