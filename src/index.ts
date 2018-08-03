@@ -24,8 +24,6 @@ const context = async ({req, connection}: {req: Request; connection: any}) => {
     },
   });
 
-  console.log(data);
-
   return {
     userId: data.userId,
     dataloaders: new Dataloaders(),

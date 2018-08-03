@@ -56,15 +56,12 @@ export class Playlist {
     const fieldsString = parsedFields.join(', ');
     const query = `SELECT ${fieldsString} FROM playlist_data WHERE ${fieldName}=$1;`;
     let {rows} = await DBConnection.getInstance().query(query, [fieldValue]);
-    console.log(rows);
     const ids = rows.map((row: TPlaylist) => row.id);
     const covers = await Cover.getInstance().batchFindBy('playlist_id', ids, ['*']);
     rows = rows.map((row: TPlaylist, index) => {
       row.cover = covers[index];
       return row;
     });
-
-    console.log(rows);
 
     return rows;
   }
