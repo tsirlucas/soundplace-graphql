@@ -6,13 +6,15 @@
 	"version": "1.5.2",
 	"main": "server.js",
 	"scripts": {
-    "build": "./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
-    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
-    "dev": "NODE_ENV=development npm run build:live",
-    "start": "NODE_ENV=production npm run build",
-    "release": "semantic-release"
+		"build": "./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
+		"build:live": "nodemon --exec ./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
+		"dev": "NODE_ENV=development npm run build:live",
+		"start": "NODE_ENV=production npm run build",
+		"release": "semantic-release"
 	},
 	"dependencies": {
+		"@async-generators/filter": "^0.1.1",
+		"@async-generators/map": "^0.1.0",
 		"apollo-server-express": "^2.0.0",
 		"axios": "^0.18.0",
 		"dataloader": "^1.4.0",
@@ -20,9 +22,11 @@
 		"express": "^4.16.3",
 		"graphql": "^0.13.2",
 		"graphql-fields": "^1.1.0",
+		"graphql-postgres-subscriptions": "^1.0.2",
 		"graphql-tools": "^3.0.5",
 		"lodash.groupby": "^4.6.0",
-		"pg": "^7.4.3"
+		"pg": "^7.4.3",
+		"subscriptions-transport-ws": "^0.9.14"
 	},
 	"devDependencies": {
 		"@semantic-release/changelog": "^2.1.1",

@@ -1,7 +1,7 @@
-import {Playlist as TPlaylist, Track as TTrack} from 'models';
+import {DBConnection} from 'src/db/DBConnection';
+import {Playlist as TPlaylist, Track as TTrack} from 'src/models';
 
-import {DBConnection} from './DBConnection';
-import {Track} from './Track';
+import {Cover} from './Cover';
 
 export class Playlist {
   private static instance: Playlist;
@@ -26,7 +26,13 @@ export class Playlist {
     const parsedFields = this.parseFields(fields);
     const fieldsString = parsedFields.join(', ');
     const query = `SELECT ${fieldsString} FROM playlist_data;`;
-    const {rows} = await DBConnection.getInstance().query(query, []);
+    let {rows} = await DBConnection.getInstance().query(query, []);
+    const ids = rows.map((row: TPlaylist) => row.id);
+    const covers = await Cover.getInstance().batchFindBy('playlist_id', ids, ['*']);
+    rows = rows.map((row: TPlaylist, index) => {
+      row.cover = covers[index];
+      return row;
+    });
     return rows;
   }
 
@@ -35,7 +41,10 @@ export class Playlist {
     const fieldsString = parsedFields.join(', ');
     const query = `SELECT ${fieldsString} FROM playlist_data WHERE id=$1;`;
     const {rows} = await DBConnection.getInstance().query(query, [id]);
-    return rows[0];
+    const cover = await Cover.getInstance().findBy('playlist_id', id, ['*']);
+    const playlist = rows[0] as TPlaylist;
+    playlist.cover = cover;
+    return playlist;
   }
 
   public async findBy(
@@ -46,14 +55,19 @@ export class Playlist {
     const parsedFields = this.parseFields(fields);
     const fieldsString = parsedFields.join(', ');
     const query = `SELECT ${fieldsString} FROM playlist_data WHERE ${fieldName}=$1;`;
-    const {rows} = await DBConnection.getInstance().query(query, [fieldValue]);
+    let {rows} = await DBConnection.getInstance().query(query, [fieldValue]);
+    const ids = rows.map((row: TPlaylist) => row.id);
+    const covers = await Cover.getInstance().batchFindBy('playlist_id', ids, ['*']);
+    rows = rows.map((row: TPlaylist, index) => {
+      row.cover = covers[index];
+      return row;
+    });
+
     return rows;
   }
 
   public async findTracks(id: string, fields: string[]): Promise<TTrack[]> {
-    const parsedFields = Track.getInstance()
-      .parseFields(fields)
-      .map((field) => `t.${field}`);
+    const parsedFields = fields.map((field) => `t.${field}`);
     const fieldsString = parsedFields.join(', ');
 
     const query = `SELECT ${fieldsString}
@@ -64,15 +78,20 @@ export class Playlist {
     ON pt.track_id = t.id
     WHERE pt.playlist_id=$1`;
 
-    const {rows} = await DBConnection.getInstance().query(query, [id]);
+    let {rows} = await DBConnection.getInstance().query(query, [id]);
+    const ids = rows.map((row: TPlaylist) => row.id);
+    const covers = await Cover.getInstance().batchFindBy('track_id', ids, ['*']);
+    rows = rows.map((row: TPlaylist, index) => {
+      row.cover = covers[index];
+      return row;
+    });
+
     return rows;
   }
 
   public async batchFindTracks(ids: string[], fields: string[]): Promise<TTrack[]> {
     try {
-      const parsedFields = Track.getInstance()
-        .parseFields(fields)
-        .map((field) => `t.${field}`);
+      const parsedFields = fields.map((field) => `t.${field}`);
       const fieldsString = parsedFields.join(', ');
 
       const query = `SELECT ${fieldsString}, pt.playlist_id as "playlistId"
@@ -83,11 +102,22 @@ export class Playlist {
                     ON pt.track_id = t.id
                     WHERE pt.playlist_id= ANY ($1)`;
 
-      const {rows} = await DBConnection.getInstance().query(query, [[ids]]);
+      let {rows} = await DBConnection.getInstance().query(query, [[ids]]);
+      const covers = await Cover.getInstance().batchFindBy('track_id', ids, ['*']);
+      rows = rows.map((row: TTrack, index) => {
+        row.cover = covers[index];
+        return row;
+      });
       return rows;
     } catch (e) {
       console.log(e);
       return e;
     }
+  }
+
+  public async checkRelation(playlistId: string, userId: string) {
+    const query = `SELECT user_id FROM playlist_data WHERE id=$1 AND user_id=$2;`;
+    const {rows} = await DBConnection.getInstance().query(query, [playlistId, userId]);
+    return rows.length > 0;
   }
 }

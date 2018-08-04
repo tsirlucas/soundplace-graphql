@@ -1,11 +1,3 @@
-import {Album} from './Album';
-import {Artist} from './Artist';
-import {DBTrack} from './DBTrack';
+import {DBTrack} from 'src/models/DBTrack';
 
-export type Track = {
-  id: DBTrack['id'];
-  name: DBTrack['name'];
-  album: Album;
-  artist: Artist;
-  duration: DBTrack['duration'];
-};
+export type Track = DBTrack;

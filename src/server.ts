@@ -1,8 +1,8 @@
-import {environment} from 'config';
 import {writeFile} from 'fs';
 import {promisify} from 'util';
 
 import app from 'src';
+import {environment} from 'src/environment';
 
 const fs_writeFile = promisify(writeFile);
 

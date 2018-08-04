@@ -1,6 +1,5 @@
-import {User as TUser} from 'models';
-
-import {DBConnection} from './DBConnection';
+import {DBConnection} from 'src/db/DBConnection';
+import {User as TUser} from 'src/models';
 
 export class User {
   private static instance: User;

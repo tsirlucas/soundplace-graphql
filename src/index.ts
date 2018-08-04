@@ -1,39 +1,44 @@
 import {ApolloServer} from 'apollo-server-express';
 import axios from 'axios';
-import {environment} from 'config';
-import {Dataloaders} from 'dataloaders';
-import express, {Response} from 'express';
-import {schema} from 'schema';
+import express, {Request} from 'express';
+import {createServer} from 'http';
+
+import {Dataloaders} from 'src/dataloaders';
+import {environment} from 'src/environment';
+import {schema} from 'src/schema';
 
 const app = express();
 
-app.use(async (req, res, next) => {
-  try {
-    if (req.method !== 'GET') {
-      const {authorization} = req.headers;
-      const {data} = await axios.get(`${environment.settings.authEndpoint}/jwt/verify`, {
-        headers: {
-          Authorization: authorization || null,
-        },
-      });
+const context = async ({req, connection}: {req: Request; connection: any}) => {
+  let authorization: string | undefined;
 
-      res.locals.userId = data.userId;
-      res.locals.dataloaders = new Dataloaders();
-    }
-    next();
-  } catch (e) {
-    res.status(e.response.status).send(e.response.data);
+  if (req && req.method !== 'GET') {
+    authorization = req.headers.authorization;
+  } else if (connection && connection.context) {
+    authorization = connection.context.authorization;
   }
-});
+
+  const {data} = await axios.get(`${environment.settings.authEndpoint}/jwt/verify`, {
+    headers: {
+      Authorization: authorization || null,
+    },
+  });
+
+  return {
+    userId: data.userId,
+    dataloaders: new Dataloaders(),
+  };
+};
 
 const server = new ApolloServer({
   schema,
-  context: ({res}: {res: Response}) => ({
-    userId: res.locals.userId,
-    dataloaders: res.locals.dataloaders,
-  }),
+  context,
 });
 
 server.applyMiddleware({app, cors: true});
 
-export default app;
+const httpServer = createServer(app);
+
+server.installSubscriptionHandlers(httpServer);
+
+export default httpServer;

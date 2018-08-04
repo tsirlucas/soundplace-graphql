@@ -1,6 +1,8 @@
+import {DBCover} from './DBCover';
+
 export type DBTrack = {
   id: string;
   name: string;
-  album_id: string;
-  duration: number;
+  channel: string;
+  cover: DBCover;
 };

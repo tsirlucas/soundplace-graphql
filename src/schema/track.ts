@@ -1,65 +1,132 @@
-import {gql} from 'apollo-server-express';
-import {Track} from 'db';
+import {gql, withFilter} from 'apollo-server-express';
 import {GraphQLResolveInfo} from 'graphql';
 import {makeExecutableSchema} from 'graphql-tools';
 
-import {Context} from 'models';
-
-import {albumTypes} from './album';
-import {artistTypes} from './artist';
-import {TopLevelFields} from './util';
+import {Cover, Playlist, PubSub, Track} from 'src/db';
+import {Context} from 'src/models';
+import {TopLevelFields} from 'src/schema/util';
 
 export const trackTypes = gql`
-  ${artistTypes}
-
-  ${albumTypes}
+  type TrackCover {
+    id: ID!
+    small: String
+    medium: String
+    big: String
+  }
 
   type Track {
     id: ID!
     name: String
-    duration: Int
-    artistId: ID!
-    albumId: ID!
-    artist: Artist
-    album: Album
+    cover: TrackCover
+    channel: String
+  }
+
+  type TrackSubs {
+    operation: String
+    item: Track
   }
 `;
 
 const trackQueries = gql`
   type Query {
     track(id: ID!): Track
+    tracks(ids: [ID!]): [Track]
+    playlistTracks(playlistId: ID!): [Track]
   }
 `;
 
-export const trackResolvers = {
-  Track: {
-    artist: ({artistId}: any, _args: any, {dataloaders}: Context, info: GraphQLResolveInfo) => {
+const trackSubscriptions = gql`
+  type Subscription {
+    playlistTracks(playlistId: ID!): TrackSubs
+    tracks(ids: [ID!]): TrackSubs
+  }
+`;
+
+const trackQueriesResolvers = {
+  Query: {
+    track: (_obj: any, args: any, _context: Context, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info)
-        .getId()
+        .getIdFor(['cover'])
         .get();
-      return dataloaders.artistLoader.load({key: artistId, fields: topLevelFields});
+      return Track.getInstance().findById(args.id, topLevelFields);
     },
-    album: ({albumId}: any, _args: any, {dataloaders}: Context, info: GraphQLResolveInfo) => {
+    tracks: (_obj: any, args: any, _context: Context, info: GraphQLResolveInfo) => {
       const topLevelFields = TopLevelFields(info)
-        .getId()
+        .getIdFor(['cover'])
         .get();
-      return dataloaders.albumLoader.load({key: albumId, fields: topLevelFields});
+      return Track.getInstance().batchFindByIds(args.ids, topLevelFields);
+    },
+    playlistTracks: (_obj: any, args: any, _context: Context, info: GraphQLResolveInfo) => {
+      const topLevelFields = TopLevelFields(info)
+        .getIdFor(['cover'])
+        .get();
+      return Playlist.getInstance().findTracks(args.playlistId, topLevelFields);
     },
   },
 };
 
-const trackQueriesResolvers = {
-  Query: {
-    track: (_obj: any, args: any, _context: any, info: GraphQLResolveInfo) => {
-      const topLevelFields = TopLevelFields(info)
-        .pickIdsFrom(['artist', 'album'])
-        .get();
-      return Track.getInstance().findById(args.id, topLevelFields);
+const trackSubscriptionResolveFn = async (
+  payload: any,
+  _args: any,
+  _context: Context,
+  info: GraphQLResolveInfo,
+) => {
+  if (payload.entity === 'TRACK') {
+    const {item, operation} = payload;
+    const topLevelFields = TopLevelFields(info)
+      .inner('item')
+      .inner('cover')
+      .get();
+
+    const cover = Cover.getInstance().findBy('track_id', item.id, topLevelFields);
+    return {operation, item: {...item, cover}};
+  } else {
+    const topLevelFields = TopLevelFields(info)
+      .inner('item')
+      .getIdFor(['cover'])
+      .get();
+    const track = await Track.getInstance().findById(payload.item.track_id, topLevelFields);
+    return {operation: payload.operation, item: track};
+  }
+};
+
+const trackSubscriptionsResolvers = {
+  Subscription: {
+    playlistTracks: {
+      resolve: trackSubscriptionResolveFn,
+      subscribe: withFilter(
+        () => PubSub.getInstance().pubsub.asyncIterator(['TRACK', 'PLAYLIST_TRACK', 'COVER']),
+        async (payload, args) => {
+          switch (payload.entity) {
+            case 'TRACK':
+              return Track.getInstance().checkRelation(payload.item.id, args.playlistId);
+            case 'PLAYLIST_TRACK':
+              return payload.item.playlist_id === args.playlistId;
+            case 'COVER':
+              return Track.getInstance().checkRelation(payload.item.track_id, args.playlistId);
+            default:
+              return false;
+          }
+        },
+      ),
+    },
+    tracks: {
+      resolve: trackSubscriptionResolveFn,
+      subscribe: withFilter(
+        () => PubSub.getInstance().pubsub.asyncIterator(['TRACK', 'COVER']),
+        async (payload, args) => {
+          if (payload.item.id === 'TRACK') {
+            return args.ids.indexOf(payload.item.id) >= 0;
+          } else {
+            return args.ids.indexOf(payload.item.track_id) >= 0;
+          }
+        },
+      ),
     },
   },
 };
 
 export const trackSchema = makeExecutableSchema({
-  typeDefs: [trackTypes, trackQueries],
-  resolvers: [trackResolvers, trackQueriesResolvers],
+  typeDefs: [trackTypes, trackQueries, trackSubscriptions],
+  resolvers: [trackQueriesResolvers, trackSubscriptionsResolvers],
 });
