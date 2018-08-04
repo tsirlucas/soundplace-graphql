@@ -1,3 +1,19 @@
+# [1.6.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.5.2...v1.6.0) (2018-08-04)
+
+
+### Bug Fixes
+
+* **logs:** remove console.logs ([39477e9](https://github.com/tsirlucas/soundplace-graphql/commit/39477e9))
+
+
+### Features
+
+* **cover:** adapt to new cover table ([39de9d1](https://github.com/tsirlucas/soundplace-graphql/commit/39de9d1))
+* **import:** add importing field to user ([339553a](https://github.com/tsirlucas/soundplace-graphql/commit/339553a))
+* **subscription:** add subscription resolvers/schemas ([f3a5e17](https://github.com/tsirlucas/soundplace-graphql/commit/f3a5e17))
+* **subscription:** add subscription server and user logics ([13825ed](https://github.com/tsirlucas/soundplace-graphql/commit/13825ed))
+* **tracks:** add batch track query and subscription ([9e1ce35](https://github.com/tsirlucas/soundplace-graphql/commit/9e1ce35))
+
 ## [1.5.2](https://github.com/tsirlucas/soundplace-graphql/compare/v1.5.1...v1.5.2) (2018-07-23)
 
 
