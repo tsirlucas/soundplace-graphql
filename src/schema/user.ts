@@ -11,6 +11,7 @@ const userTypes = gql`
     id: ID!
     name: String
     image: String
+    importing: Boolean
   }
 
   type UserSubs {
