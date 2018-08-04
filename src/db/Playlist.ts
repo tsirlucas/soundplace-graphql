@@ -104,7 +104,7 @@ export class Playlist {
 
       let {rows} = await DBConnection.getInstance().query(query, [[ids]]);
       const covers = await Cover.getInstance().batchFindBy('track_id', ids, ['*']);
-      rows = rows.map((row: TPlaylist, index) => {
+      rows = rows.map((row: TTrack, index) => {
         row.cover = covers[index];
         return row;
       });
