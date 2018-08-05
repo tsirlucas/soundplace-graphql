@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/tsirlucas/soundplace-graphql/compare/v1.6.0...v1.6.1) (2018-08-05)
+
+
+### Bug Fixes
+
+* **playground:** enable playground in prod ([47cc39d](https://github.com/tsirlucas/soundplace-graphql/commit/47cc39d))
+
 # [1.6.0](https://github.com/tsirlucas/soundplace-graphql/compare/v1.5.2...v1.6.0) (2018-08-04)
 
 

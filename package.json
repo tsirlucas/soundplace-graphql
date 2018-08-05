@@ -3,7 +3,7 @@
 	"description": "Soundplace Graphql API",
 	"repository": {},
 	"license": "UNLICENSED",
-	"version": "1.6.0",
+	"version": "1.6.1",
 	"main": "server.js",
 	"scripts": {
 		"build": "./node_modules/.bin/ts-node -r tsconfig-paths/register ./src/server.ts",
