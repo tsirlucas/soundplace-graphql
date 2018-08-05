@@ -11,7 +11,6 @@ const app = express();
 
 const context = async ({req, connection}: {req: Request; connection: any}) => {
   let authorization: string | undefined;
-
   if (req && req.method !== 'GET') {
     authorization = req.headers.authorization;
   } else if (connection && connection.context) {
@@ -36,8 +35,7 @@ const server = new ApolloServer({
   introspection: true,
   playground: true,
   subscriptions: {
-    keepAlive: 5000,
-    onConnect: () => console.log('User connected to socket'),
+    keepAlive: 15000,
   },
 });
 
