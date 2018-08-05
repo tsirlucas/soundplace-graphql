@@ -35,6 +35,10 @@ const server = new ApolloServer({
   context,
   introspection: true,
   playground: true,
+  subscriptions: {
+    keepAlive: 5000,
+    onConnect: () => console.log('User connected to socket'),
+  },
 });
 
 server.applyMiddleware({app, cors: true});
