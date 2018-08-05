@@ -33,6 +33,8 @@ const context = async ({req, connection}: {req: Request; connection: any}) => {
 const server = new ApolloServer({
   schema,
   context,
+  introspection: true,
+  playground: true,
 });
 
 server.applyMiddleware({app, cors: true});
