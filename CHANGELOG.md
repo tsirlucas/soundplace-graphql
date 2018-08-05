@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/tsirlucas/soundplace-graphql/compare/v1.6.1...v1.6.2) (2018-08-05)
+
+
+### Bug Fixes
+
+* **subscriptions:** add keepalive timeout and log connections ([48f1ac6](https://github.com/tsirlucas/soundplace-graphql/commit/48f1ac6))
+
 ## [1.6.1](https://github.com/tsirlucas/soundplace-graphql/compare/v1.6.0...v1.6.1) (2018-08-05)
 
 
