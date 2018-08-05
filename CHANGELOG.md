@@ -1,3 +1,10 @@
+## [1.6.3](https://github.com/tsirlucas/soundplace-graphql/compare/v1.6.2...v1.6.3) (2018-08-05)
+
+
+### Bug Fixes
+
+* **subscription:** remove onConnect ([7264da8](https://github.com/tsirlucas/soundplace-graphql/commit/7264da8))
+
 ## [1.6.2](https://github.com/tsirlucas/soundplace-graphql/compare/v1.6.1...v1.6.2) (2018-08-05)
 
 
