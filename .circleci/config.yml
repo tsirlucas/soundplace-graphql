@@ -43,7 +43,7 @@ jobs:
           command: gcloud auth activate-service-account --key-file .gcloud-secrets/gcloud_auth.json
       - run:
           name: Get cluster credentials
-          command: gcloud container clusters get-credentials soundplace --zone us-central1-b --project soundplace-infra
+          command: gcloud container clusters get-credentials soundplace --zone us-central1-b --project soundplace-infra-v3
       - run:
           name: Rolling update pods
           command: kubectl rolling-update graphql-api-rc --image=tsirlucas/soundplace-graphql:${CIRCLE_TAG} --image-pull-policy=Always
